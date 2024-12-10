@@ -9,23 +9,22 @@ static const int bypass_surface_visibility = 0;  /* 1 means idle inhibitors will
 static const unsigned int borderpx         = 1;  /* border pixel of windows */
 static const float rootcolor[]             = COLOR(0x222222ff);
 static const float bordercolor[]           = COLOR(0x444444ff);
-static const float focuscolor[]            = COLOR(0xFFFFFFFF);
+static const float focuscolor[]            = COLOR(0x005577ff);
 static const float urgentcolor[]           = COLOR(0xff0000ff);
 /* This conforms to the xdg-protocol. Set the alpha to zero to restore the old behavior */
 static const float fullscreen_bg[]         = {0.1f, 0.1f, 0.1f, 1.0f}; /* You can also use glsl colors */
 
 /* tagging - TAGCOUNT must be no greater than 31 */
-#define TAGCOUNT (5)
+#define TAGCOUNT (9)
 
 /* logging */
 static int log_level = WLR_ERROR;
 
 /* Autostart */
 static const char *const autostart[] = {
-        "wbg", "/home/prathamesh/backgrounds/samurai.png", NULL,
-	"waybar", NULL,
-	"dunst", NULL,
-        NULL,	NULL /* terminate */
+        "wbg", "/path/to/your/image", NULL,
+        NULL /* terminate */
+
 };
 
 
@@ -64,7 +63,10 @@ static const MonitorRule monrules[] = {
 /* keyboard */
 static const struct xkb_rule_names xkb_rules = {
 	/* can specify fields: rules, model, layout, variant, options */
-	.options = "num_lock:on",
+	/* example:
+	.options = "ctrl:nocaps",
+	*/
+	.options = NULL,
 };
 
 static const int repeat_rate = 25;
@@ -74,10 +76,10 @@ static const int repeat_delay = 600;
 static const int tap_to_click = 1;
 static const int tap_and_drag = 1;
 static const int drag_lock = 1;
-static const int natural_scrolling = 1;
+static const int natural_scrolling = 0;
 static const int disable_while_typing = 1;
 static const int left_handed = 0;
-static const int middle_button_emulation = 1;
+static const int middle_button_emulation = 0;
 /* You can choose between:
 LIBINPUT_CONFIG_SCROLL_NO_SCROLL
 LIBINPUT_CONFIG_SCROLL_2FG
@@ -105,7 +107,7 @@ LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT
 LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE
 */
 static const enum libinput_config_accel_profile accel_profile = LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT;
-static const double accel_speed = 1.0;
+static const double accel_speed = 0.5;
 
 /* You can choose between:
 LIBINPUT_CONFIG_TAP_MAP_LRM -- 1/2/3 finger tap maps to left/right/middle
@@ -130,43 +132,18 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *termcmd[]   = { "foot", NULL };
-static const char *menucmd[]   = { "wofi", "--show", "run", NULL };
-static const char *blue[]      = { "blueman-manager", NULL };
-static const char *torrent[]   = { "qbittorrent", NULL};
-static const char *power_menu[] = { "power-menu", NULL};
-
-/*Screenshot */
-static const char *scr_active[]  = { "grimshot", "save", "active", NULL};
-static const char *scr_monitor[] = { "grimshot", "save", "output", NULL};
-static const char *scr_area[]    = { "grimshot", "save", "area", NULL};
-static const char *scr_area_copy[] = { "grim", "-g", "$(slurp)", "-", "|", "wl-copy", NULL };
-
-/* volume & brightness */
-static const char *upvol[]   = { "/usr/bin/pactl", "set-sink-volume", "0", "+5%",     NULL };
-static const char *downvol[] = { "/usr/bin/pactl", "set-sink-volume", "0", "-5%",     NULL };
-static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "toggle",  NULL };
-static const char *brightness_up[] = {"/usr/bin/brightnessctl", "set", "5%+", NULL};
-static const char *brightness_down[] = {"/usr/bin/brightnessctl", "set", "5%-", NULL};
+static const char *termcmd[] = { "foot", NULL };
+static const char *menucmd[] = { "wofi", "--show", "run", NULL };
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
 	/* modifier                  key                 function        argument */
-	{ MODKEY,                    XKB_KEY_r,          spawn,          {.v = menucmd} },
+	{ MODKEY,                    XKB_KEY_p,          spawn,          {.v = menucmd} },
 	{ MODKEY, 		     XKB_KEY_Return,     spawn,          {.v = termcmd} },
-	{ MODKEY,                    XKB_KEY_b,          togglebar,      {0} },
-/*       { MODKEY,                    XKB_KEY_Down,       moveresizekb,   {.v = (int []){ 0, 40, 0, 0 }}}, */
-/*       { MODKEY,                    XKB_KEY_Up,         moveresizekb,   {.v = (int []){ 0, -40, 0, 0 }}}, */
-        { MODKEY,                    XKB_KEY_k,          moveresizekb,   {.v = (int []){ 40, 0, 0, 0 }}}, 
-        { MODKEY,                    XKB_KEY_j,          moveresizekb,   {.v = (int []){ -40, 0, 0, 0 }}},
-/*       { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Down,       moveresizekb,   {.v = (int []){ 0, 0, 0, 40 }}}, */
-/*      { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Up,         moveresizekb,   {.v = (int []){ 0, 0, 0, -40 }}}, */
-/*      { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Right,      moveresizekb,   {.v = (int []){ 0, 0, 40, 0 }}}, */
-/*       { MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Left,       moveresizekb,   {.v = (int []){ 0, 0, -40, 0 }}}, */
-	{ MODKEY,                    XKB_KEY_Left,       focusstack,     {.i = +1} },
-	{ MODKEY,                    XKB_KEY_Right,      focusstack,     {.i = -1} },
-	{ MODKEY, 	     	     XKB_KEY_Up,         movestack,      {.i = +1} },
-	{ MODKEY, 	  	     XKB_KEY_Down,       movestack,      {.i = -1} },
+	{ MODKEY,                    XKB_KEY_j,          focusstack,     {.i = +1} },
+	{ MODKEY,                    XKB_KEY_k,          focusstack,     {.i = -1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_J,          movestack,      {.i = +1} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_K,          movestack,      {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,          incnmaster,     {.i = +1} },
 	{ MODKEY,                    XKB_KEY_d,          incnmaster,     {.i = -1} },
 	{ MODKEY,                    XKB_KEY_h,          setmfact,       {.f = -0.05f} },
@@ -196,18 +173,6 @@ static const Key keys[] = {
 	TAGKEYS(          XKB_KEY_8, XKB_KEY_asterisk,                   7),
 	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                  8),
 	{ MODKEY|SHIFT,		     XKB_KEY_Q,          quit,           {0} },
-	{ 0,                         XKB_KEY_XF86AudioRaiseVolume, spawn, {.v = upvol   } },
-        { 0,                         XKB_KEY_XF86AudioLowerVolume, spawn, {.v = downvol } },
-        { 0,                         XKB_KEY_XF86AudioMute, spawn, {.v = mutevol } },
-	{ 0, 			     XKB_KEY_XF86MonBrightnessUp,  spawn, {.v = brightness_up} }, 
-	{ 0, 			     XKB_KEY_XF86MonBrightnessDown, spawn, {.v = brightness_down} },
-	{ 0,			     XKB_KEY_Print, 	 spawn,  	  {.v = scr_active} },
-	{ MODKEY,	  	     XKB_KEY_Print,	 spawn, 	  {.v = scr_monitor} },
-	{ MODKEY|SHIFT,		     XKB_KEY_Print, 	 spawn, 	  {.v = scr_area} },
-	{ MODKEY|ALT, 		     XKB_KEY_Print, 	 spawn, 	  {.v = scr_area_copy} },
-	{ MODKEY|SHIFT,		     XKB_KEY_B, 	 spawn, 	  {.v = blue} },
-	{ MODKEY|SHIFT,		     XKB_KEY_T, 	 spawn, 	  {.v = torrent} }, 
-	{ MODKEY|ALT,		     XKB_KEY_Return, 	 spawn, 	  {.v = power_menu} },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
