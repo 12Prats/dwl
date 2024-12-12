@@ -73,7 +73,7 @@ static const int repeat_delay = 600;
 /* Trackpad */
 static const int tap_to_click = 1;
 static const int tap_and_drag = 1;
-static const int drag_lock = 1;
+static const int drag_lock = 0;
 static const int natural_scrolling = 1;
 static const int disable_while_typing = 1;
 static const int left_handed = 0;
@@ -147,6 +147,8 @@ static const char *mutevol[] = { "/usr/bin/pactl", "set-sink-mute",   "0", "togg
 static const char *brightness_up[] = {"/usr/bin/brightnessctl", "set", "5%+", NULL};
 static const char *brightness_down[] = {"/usr/bin/brightnessctl", "set", "5%-", NULL};
 
+#include "shiftview.c"
+
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: c -> C, 2 -> at, etc. */
 	/* modifier                  key                 function        argument */
@@ -163,6 +165,8 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_l,          setmfact,       {.f = +0.05f} },
 	{ MODKEY|SHIFT,              XKB_KEY_Return,     zoom,           {0} },
 	{ MODKEY,                    XKB_KEY_Tab,        view,           {0} },
+	{ MODKEY,                    XKB_KEY_a,          shiftview,      { .i = -1 } },
+        { MODKEY,                    XKB_KEY_semicolon,  shiftview,      { .i = 1 } },
 	{ MODKEY, 		     XKB_KEY_q,          killclient,     {0} },
 	{ MODKEY,                    XKB_KEY_t,          setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                    XKB_KEY_e,          setlayout,      {.v = &layouts[1]} },
@@ -217,8 +221,8 @@ static const Button buttons[] = {
 };
 
 static const Gesture gestures[] = {
-//	 { MODKEY, SWIPE_LEFT, 4, shiftview, { .i = 1 } },
-//	 { MODKEY, SWIPE_RIGHT, 4, shiftview, { .i = -1 } },
-	{ MODKEY, SWIPE_UP, 3, focusstack, {.i = 1} },
-	{ MODKEY, SWIPE_DOWN, 3, focusstack, {.i = -1} },
+        { 0, SWIPE_LEFT, 3, shiftview, { .i = 1 } },
+        { 0, SWIPE_RIGHT, 3, shiftview, { .i = -1 } },
+	{ 0, SWIPE_UP, 4, focusstack, {.i = 1} },
+	{ 0, SWIPE_DOWN, 4, focusstack, {.i = -1} },
 };
